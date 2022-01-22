@@ -8,12 +8,27 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(knitr)
+library(ggplot2)
+library(dplyr)
+library(janitor)
 ```
 
 # Read survey 1
 
 Here we are going to read an Excel file:
 ```{r}
-survey1 <- readxl::read_excel("~/shared/survey1.xlsx")
+survey1 <- readxl::read_excel("~/shared/survey1.xlsx") %>% 
+  clean_names()
 kable(survey1)
 ```
+
+Add a plot
+```{r}
+survey1 %>% 
+  mutate(are_you_in_toronto = tolower(are_you_in_toronto)) %>% 
+  group_by(are_you_in_toronto) %>% 
+  count() %>% 
+  ggplot() +
+  geom_col(aes(x = are_you_in_toronto, y = n))
+```
+
